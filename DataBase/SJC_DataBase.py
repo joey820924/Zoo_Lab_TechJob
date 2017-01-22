@@ -1,0 +1,58 @@
+''' coding=utf-8'''
+import MySQLdb
+import json
+import sys
+import os
+reload(sys)
+sys.setdefaultencoding('utf-8')
+def GetTableName():
+    conn = MySQLdb.connect(host='127.0.0.1',user='root',passwd='joey820924',db='Soft_Job_Comment',charset='utf8')
+    cursor = conn.cursor()
+    sql = 'SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = "Soft_Job_Comment"'
+    cursor.execute(sql)
+    data = cursor.fetchall()
+    cursor.close()
+    with open('TABLE_NAME.json','w+') as f:
+        for row in data:
+            result = {}
+            result['TABLE_NAME'] = str(row[0])
+            jsondata = json.dumps(result,ensure_ascii=False)
+            f.write(jsondata+'\n')
+    f.close()
+    
+    
+    
+def createJson():
+    conn = MySQLdb.connect(host = '127.0.0.1',user = 'root',passwd = 'joey820924', db='Soft_Job_Comment',charset='utf8' )
+    cursor = conn.cursor()
+    path = '/Users/joey/Desktop/TABLE_NAME.json'
+    if os.path.exists('SJC.json'):
+        os.remove('SJC.json')
+    file = open(path,'r')
+    for line in file.readlines():
+        dic = json.loads(line)
+        TableName = str(dic['TABLE_NAME'])
+        sql = 'SELECT * FROM '+TableName
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        fields = cursor.description
+        column_list = [] 
+        for i in fields:
+            column_list.append(i[0])
+        
+
+        with open('SJC.json','a') as f:
+            for row in data:
+                result = {}
+                result['User'] = str(row[0])
+                result['Comment'] = str(row[1])
+                result['Score'] = str(row[2])
+                jsondata = json.dumps(result,ensure_ascii=False,sort_keys=True)
+                f.write(jsondata+'\n')
+    #A = SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Soft_Job_Comment'
+
+if __name__ == '__main__':
+    GetTable = GetTableName()
+    JsonData = createJson()
+    
+    
