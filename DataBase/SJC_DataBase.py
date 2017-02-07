@@ -41,15 +41,16 @@ def createJson():
         for i in fields:
             column_list.append(i[0])
         
-
-        with open('SJC.json','a') as f:  #a 是 append的意思
+        a = []
+        with open('SJC.json','w+') as f:  #a 是 append的意思
             for row in data:
                 result = {}
                 result['User'] = str(row[0])
                 result['Comment'] = str(row[1])
                 result['Score'] = str(row[2])
-                jsondata = json.dumps(result,ensure_ascii=False,sort_keys=True)
-                f.write(jsondata+'\n')
+                a.append(result)
+            jsondata = json.dumps(a,ensure_ascii=False,sort_keys=True)
+            f.write(jsondata+'\n')
     #A = SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Soft_Job_Comment'
 
 if __name__ == '__main__':
