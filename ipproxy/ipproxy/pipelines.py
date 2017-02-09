@@ -11,8 +11,8 @@ class IpproxyPipeline(object):
         DBKWARGS = spider.settings.get('DBKWARGS')
         con = MySQLdb.connect(**DBKWARGS)
         cur = con.cursor()
-        sql = ("insert into proxy(IP,PORT,POSITION,TYPE,SPEED,LAST) values(%s,%s,%s,%s,%s,%s)")
-        lis = (item['IP'],item['PORT'],pre_item['POSITION'],pre_item['TYPE'],pre_item['SPEED']pre_item['LAST_CHECK_TIME'])
+        sql = ("insert into proxy(IP,PORT,TYPE,SPEED) values(%s,%s,%s,%s)")
+        lis = (item['IP'],item['PORT'],pre_item['TYPE'],pre_item['SPEED'])
         try:
             cur.execute(sql,lis)
         except Exception,e:

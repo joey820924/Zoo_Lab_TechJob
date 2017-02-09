@@ -23,10 +23,10 @@ class IpsSpider(scrapy.Spider):
             pre_item = IpproxyItem()
             pre_item['IP'] = ip.xpath('td[2]/text()').extract()
             pre_item['PORT'] = ip.xpath('td[3]/text()').extract()
-            pre_item['POSITION'] = ip.xpath('string(td[4])').extract()[0].strip()
+            #pre_item['POSITION'] = ip.xpath('string(td[4])').extract()[0].strip()
             pre_item['TYPE'] = ip.xpath('td[6]/text()').extract()[0]
             pre_item['SPEED'] = ip.xpath('td[7]/div/@title').re('\d+\.d*')[0]
-            pre_item['LAST_CHECK_TIME'] = ip.xpath('td[10]/text()').extract()[0]
+            #pre_item['LAST_CHECK_TIME'] = ip.xpath('td[10]/text()').extract()[0]
             items.append(pre_item)
         return items
 
