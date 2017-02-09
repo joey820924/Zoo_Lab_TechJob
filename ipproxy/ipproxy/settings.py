@@ -34,9 +34,8 @@ USER_AGENTS = ["Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrow
               "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20",
               "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52",
               ]
-PROXIES = [{'ip_port': '121.31.146.93:8123', 'user_pass': ''},
-           {'ip_port': '119.183.11.54:9999', 'user_pass': ''},
-           {'ip_port': '119.183.101.73:9999', 'user_pass': ''},]
+PROXIES = [{'ip_port': '11.175.143.233:8118', 'user_pass': ''},
+           ]
 COOKIES_ENABLED=False
 DOWNLOAD_DELAY=3
 # Obey robots.txt rules

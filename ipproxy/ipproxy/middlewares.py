@@ -6,8 +6,10 @@
 # http://doc.scrapy.org/en/latest/topics/spider-middleware.html
 import random
 import base64
+import logging
 from settings import PROXIES
 from scrapy import signals
+
 
 class RandomUserAgent(object):
     def __init__(self,agents):
@@ -33,7 +35,7 @@ class IpproxySpiderMiddleware(object):
         else:
             print "**************ProxyMiddleware no pass************" + proxy['ip_port']
             request.meta['proxy'] = "http://%s" % proxy['ip_port']
-    
+    '''
     @classmethod
     def from_crawler(cls, crawler):
         # This method is used by Scrapy to create your spiders.
@@ -74,4 +76,6 @@ class IpproxySpiderMiddleware(object):
             yield r
 
     def spider_opened(self, spider):
-        spider.logger.info('Spider opened: %s' % spider.name)
+        spider.logger.info('Spider opened: %s' % spider.name)'''
+
+
