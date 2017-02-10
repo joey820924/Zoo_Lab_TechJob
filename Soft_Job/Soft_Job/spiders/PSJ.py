@@ -34,25 +34,21 @@ class PsjSpider(scrapy.Spider):
 
     def parse_detail(self,response):
         Item = SoftJobItem()  #從items.py載入設定好的抓取目標item[]，把抓取的資料丟進指定的目標item[]
-        Item['Title'] = response.xpath('//meta[@property="og:title"]/@content')[0].extract().encode('utf-8')
-        Item['Author'] = response.xpath('//div[@class="article-metaline"]/span[2]/text()')[0].extract().split(' ')[0]
+        Item['Title'] = response.xpath('//meta[@property="og:title"]/@content')[0].extract()
+        Item['Author'] = response.xpath('//div[@class="article-metaline"]/span[2]/text()')[0].extract()
         datetime_str = response.xpath(u'//div[@class="article-metaline"]/span[text()="時間"]/following-sibling::span[1]/text()')[0].extract()
         Item['DateTime'] = datetime.strptime(datetime_str, '%a %b %d %H:%M:%S %Y') #轉換成指定的日期格式
         Item['IP'] = response.xpath(u'//div[@id="main-content"]/span[contains(text(),"發信站")]/text()').re('\d+\.\d+\.\d+\.\d+')
         content = ''
         for i in response.xpath('//div[@id="main-content"]/text()').extract():  #因原始碼問題，因此要進行字串連接的處理
             content+=i
-        Item['Content'] = str(content)
+        Item['Content'] = str(content).strip()
         Item['Url'] = response.url
         a = response.url.split('.')[-4]  #獲取index值，並作為資料表名稱
         a = 'Soft_Job_'+a #Mysql的資料表命名必須要以英文開頭，不能以數字開頭
         conn = MySQLdb.connect(host = '127.0.0.1',user = 'root',passwd = 'joey820924',db = 'Soft_Job_Comment',charset = 'utf8')  #資料庫連接
         cursor = conn.cursor() #獲得資料庫指標
         Item['ID'] = a
-        
-
-        
-        
         Total_Score = 0
         
         for comment in response.xpath('//div[@class="push"]'):
@@ -83,6 +79,3 @@ class PsjSpider(scrapy.Spider):
             #Comments.append({'User':Push_User,'Comment':Push_Comment,'Score':score})
         Item['TotalScore'] = Total_Score
         yield Item
-        
-        
-
