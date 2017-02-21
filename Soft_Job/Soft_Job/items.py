@@ -15,7 +15,7 @@ class SoftJobItem(scrapy.Item):
     Title = scrapy.Field()
     Author = scrapy.Field()
     DateTime = scrapy.Field()
-    IP = scrapy.Field()
+    #IP = scrapy.Field()
     Content = scrapy.Field()
     User = scrapy.Field()
     Comment = scrapy.Field()

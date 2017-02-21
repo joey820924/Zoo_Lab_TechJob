@@ -5,11 +5,12 @@ from datetime import datetime
 import logging
 import sys
 import MySQLdb
+import random
 
 class PsjSpider(scrapy.Spider):
     name = "PSJ"  #爬蟲識別名
     allowed_domains = ["ptt.cc"]  
-    start_urls = ['https://www.ptt.cc/bbs/Soft_Job/index.html',]  #起始鏈結
+    start_urls = ['https://www.ptt.cc/bbs/Soft_Job/index1.html',]  #起始鏈結
     _Page = 0
     Max_Page = 1  #最多爬幾頁
     reload(sys)
@@ -23,7 +24,7 @@ class PsjSpider(scrapy.Spider):
             yield scrapy.Request(url,callback = self.parse_detail)
 
         if self._Page < PsjSpider.Max_Page:
-            Next_Page = response.xpath(u'//div[@class="action-bar"]//a[contains(text(),"上頁")]/@href') #若小於最多爬取頁數，就爬取下個index網頁的鏈結
+            Next_Page = response.xpath(u'//div[@class="action-bar"]//a[contains(text(),"下頁")]/@href') #若小於最多爬取頁數，就爬取下個index網頁的鏈結
             if Next_Page:
                 url = response.urljoin(Next_Page[0].extract()) 
                 yield scrapy.Request(url,callback = self.parse)  #獲取下個index鏈結後，回傳給parse函數進行處理
@@ -34,21 +35,27 @@ class PsjSpider(scrapy.Spider):
 
     def parse_detail(self,response):
         Item = SoftJobItem()  #從items.py載入設定好的抓取目標item[]，把抓取的資料丟進指定的目標item[]
-        Item['Title'] = response.xpath('//meta[@property="og:title"]/@content')[0].extract()
-        Item['Author'] = response.xpath('//div[@class="article-metaline"]/span[2]/text()')[0].extract()
+        Item['Title'] = response.xpath('//meta[@property="og:title"]/@content')[0].extract().encode('utf-8')
+        Item['Author'] = response.xpath('//div[@class="article-metaline"]/span[2]/text()')[0].extract().split(' ')[0]
         datetime_str = response.xpath(u'//div[@class="article-metaline"]/span[text()="時間"]/following-sibling::span[1]/text()')[0].extract()
         Item['DateTime'] = datetime.strptime(datetime_str, '%a %b %d %H:%M:%S %Y') #轉換成指定的日期格式
-        Item['IP'] = response.xpath(u'//div[@id="main-content"]/span[contains(text(),"發信站")]/text()').re('\d+\.\d+\.\d+\.\d+')
+        #Item['IP'] = response.xpath(u'//div[@id="main-content"]/span[contains(text(),"發信站")]/text()').re('\d+\.\d+\.\d+\.\d+')
         content = ''
         for i in response.xpath('//div[@id="main-content"]/text()').extract():  #因原始碼問題，因此要進行字串連接的處理
             content+=i
-        Item['Content'] = str(content).strip()
+        content = content.replace(' ',"")
+        Item['Content'] = str(content)
         Item['Url'] = response.url
+        ran = random.randint(0,99)
         a = response.url.split('.')[-4]  #獲取index值，並作為資料表名稱
         a = 'Soft_Job_'+a #Mysql的資料表命名必須要以英文開頭，不能以數字開頭
-        conn = MySQLdb.connect(host = '127.0.0.1',user = 'root',passwd = 'joey820924',db = 'Soft_Job_Comment',charset = 'utf8')  #資料庫連接
+        conn = MySQLdb.connect(host = '140.118.110.90',port = 12345,user = 'soft_job',passwd = 'joey820924',db = 'soft_job_comment',charset = 'utf8')  #資料庫連接
         cursor = conn.cursor() #獲得資料庫指標
         Item['ID'] = a
+        
+
+        
+        
         Total_Score = 0
         
         for comment in response.xpath('//div[@class="push"]'):
@@ -79,3 +86,6 @@ class PsjSpider(scrapy.Spider):
             #Comments.append({'User':Push_User,'Comment':Push_Comment,'Score':score})
         Item['TotalScore'] = Total_Score
         yield Item
+        
+        
+
