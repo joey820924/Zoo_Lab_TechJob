@@ -48,24 +48,31 @@ class PsjSpider(scrapy.Spider):
         Item['Url'] = response.url
         ran = random.randint(0,99)
         a = response.url.split('.')[-4]  #獲取index值，並作為資料表名稱
-        a = 'Soft_Job_'+a #Mysql的資料表命名必須要以英文開頭，不能以數字開頭
-        conn = MySQLdb.connect(host = '140.118.110.90',port = 12345,user = 'soft_job',passwd = 'joey820924',db = 'soft_job_comment',charset = 'utf8')  #資料庫連接
+        a = str(a)
+        #Mysql的資料表命名必須要以英文開頭，不能以數字開頭
+        conn = MySQLdb.connect(host = '127.0.0.1',user = 'soft_job',passwd = 'joey820924',db = 'soft_job',charset = 'utf8')  #資料庫連接
         cursor = conn.cursor() #獲得資料庫指標
         Item['ID'] = a
         
 
         
-        
+        Comments = []
         Total_Score = 0
         
         for comment in response.xpath('//div[@class="push"]'):
             if comment.xpath('span[3]/a/text()'):  #因原始碼問題，因此要對comment進行以下處理
                 Push_Comment = comment.xpath('span[3]/a/text()')[0].extract()
-            else:
+            elif comment.xpath('span[3]/text()'):
                 Push_Comment = comment.xpath('span[3]/text()')[0].extract()
-             
-            Push_User = comment.xpath('span[2]/text()')[0].extract()
-            Push_Tag = comment.xpath('span[1]/text()')[0].extract()
+
+            if comment.xpath('span[2]/text()'):
+                Push_User = comment.xpath('span[2]/text()')[0].extract()
+            else:
+                Push_User = None
+
+            if comment.xpath('span[1]/text()'):
+                Push_Tag = comment.xpath('span[1]/text()')[0].extract()
+
             if u'推' in Push_Tag:
                 score = 1
 
@@ -76,14 +83,16 @@ class PsjSpider(scrapy.Spider):
                 score = 0
             
             Total_Score += score #此篇文章的總分數
-            Item['User'] = Push_User
-            Item['Comment'] = Push_Comment
-            Item['Score'] = score #單一用戶的推文分數
-            sql = 'CREATE TABLE IF NOT EXISTS '+a+'(User varchar(255),Comment varchar(255),Score varchar(255))'  #創建comment資料表
-            cursor.execute(sql) #執行sql語法
-            sql1 = 'insert into '+a+' (User,Comment,Score) values(%s,%s,%s)'
-            cursor.execute(sql1,(Push_User,Push_Comment,score))
-            #Comments.append({'User':Push_User,'Comment':Push_Comment,'Score':score})
+            #Item['User'] = Push_User
+            #Item['Comment'] = Push_Comment
+            #Item['Score'] = score #單一用戶的推文分數
+            name = 'soft_job_comment'
+            sql = 'CREATE TABLE IF NOT EXISTS '+name+'(User varchar(255),Comment varchar(255),Score varchar(255),ID varchar(255))'  #創建comment資料表
+            cursor.execute(sql)
+            if Push_User!=None:
+                cursor.execute('insert into '+name+' (User,Comment,Score,ID) values(%s,%s,%s,%s)', (Push_User,Push_Comment,score,a))
+                
+        
         Item['TotalScore'] = Total_Score
         yield Item
         
