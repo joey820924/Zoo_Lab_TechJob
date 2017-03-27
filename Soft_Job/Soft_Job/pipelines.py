@@ -13,7 +13,7 @@ from scrapy.crawler import Settings as settings
 
 class SoftJobPipeline(object):
     def __init__(self):
-        DBargs = dict(host = '127.0.0.1',db = 'soft_job',user = 'soft_job',passwd = 'joey820924',charset = "utf8",cursorclass = MySQLdb.cursors.DictCursor,use_unicode=True)
+        DBargs = dict(host = '140.118.110.90',db = 'soft_job',user = 'soft_job',passwd = 'joey820924',charset = "utf8",cursorclass = MySQLdb.cursors.DictCursor,use_unicode=True)
         self.dbpool = adbapi.ConnectionPool('MySQLdb',**DBargs)
     def process_item(self, item, spider):
         res = self.dbpool.runInteraction(self.insert_into_table,item)

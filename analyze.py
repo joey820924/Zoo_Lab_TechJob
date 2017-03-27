@@ -137,5 +137,5 @@ def showCloud(weights,names,top_n):
         ax[i].set_title('{} words'.format(label),fontsize=24)
     #plt.show()
 #showCloud(svc.coef_[0],devc.get_feature_names(),30)
-showContent(svc.coef_[0],devc.get_feature_names(),50)
-#showComment(svcc.coef_[0],c_devc.get_feature_names(),30)
+#showContent(svc.coef_[0],devc.get_feature_names(),50)
+showComment(svcc.coef_[0],c_devc.get_feature_names(),30)

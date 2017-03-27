@@ -50,7 +50,7 @@ class PsjSpider(scrapy.Spider):
         a = response.url.split('.')[-4]  #獲取index值，並作為資料表名稱
         a = str(a)
         #Mysql的資料表命名必須要以英文開頭，不能以數字開頭
-        conn = MySQLdb.connect(host = '127.0.0.1',user = 'soft_job',passwd = 'joey820924',db = 'soft_job',charset = 'utf8')  #資料庫連接
+        conn = MySQLdb.connect(host = '140.118.110',user = 'soft_job',passwd = 'joey820924',db = 'soft_job',charset = 'utf8')  #資料庫連接
         cursor = conn.cursor() #獲得資料庫指標
         Item['ID'] = a
         

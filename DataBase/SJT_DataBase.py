@@ -6,9 +6,9 @@ reload(sys)
 exec("sys.setdefaultencoding('utf-8')")  
 assert sys.getdefaultencoding().lower() == "utf-8" 
 def createJson():
-    conn = MySQLdb.connect(host = '127.0.0.1',user = 'root',passwd = 'joey820924', db='Soft_Job',charset='utf8' )
+    conn = MySQLdb.connect(host = '140.118.110.90',user = 'soft_job',passwd = 'joey820924', db='soft_job',charset='utf8' )
     cursor = conn.cursor()
-    sql = 'SELECT * FROM Soft_Job_Table'
+    sql = 'SELECT * FROM soft_job_table'
     cursor.execute(sql)
     data = cursor.fetchall()
     fields = cursor.description
@@ -25,10 +25,10 @@ def createJson():
             result['Title'] = str(row[1])
             result['Author'] = str(row[2])
             result['DateTime'] = str(row[3]).split(' ')[1] #因只想取時間而不要日期，所以用split分隔
-            result['IP'] = str(row[4])
-            result['Content'] = str(row[5])
-            result['TotalScore'] = str(row[6])
-            result['Url'] = str(row[7])
+            #result['IP'] = str(row[4])
+            result['Content'] = str(row[4])
+            result['TotalScore'] = str(row[5])
+            result['Url'] = str(row[6])
             a.append(result)  #將其包成list，讓json讀取時能一次讀
         jsondata = json.dumps(a,ensure_ascii=False,sort_keys=True)
         f.write(jsondata+'\n')
